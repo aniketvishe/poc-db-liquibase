@@ -1,22 +1,14 @@
-version: '3.9'
-
-volumes:
-  postgres-lobo-data:
-
 services:
   lobo-db:
-    container_name: lobo-db
     image: postgres:11-alpine
-    ports:
-      - "5432:5432"
+    container_name: lobo-db
     environment:
       POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: postgres
-    volumes:
-      - postgres-lobo-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
     networks:
       - lobo-net
+
 networks:
   lobo-net:
-    
-      
+    name: lobo-net   # ✅ IMPORTANT (fixed name)
