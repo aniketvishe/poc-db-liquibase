@@ -2,7 +2,7 @@ services:
   lobo-liquibase:
     container_name: lobo-liquibase
 
-    image: liquibase/liquibase:4.23   # ✅ IMPORTANT (not latest)
+    image: liquibase/liquibase   # ✅ IMPORTANT (not latest)
 
     command: >
       update
