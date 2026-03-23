@@ -1,21 +1,24 @@
 services:
   lobo-liquibase:
     container_name: lobo-liquibase
-    image: liquibase/liquibase:latest
+    image: liquibase/liquibase:4.23
 
     command: >
       update
       --changelog-file=changelog.xml
-      --driver=org.postgresql.Driver
-      --classpath=/liquibase/lib/postgresql.jar
       --username=postgres
       --password=postgres
-      --url=jdbc:postgresql://host.docker.internal:5432/postgres
+      --url=jdbc:postgresql://lobo-db:5432/postgres
 
     volumes:
-      - /var/lib/jenkins/workspace/aniket/config/changelog.xml:/liquibase/changelog.xml
-      - /var/lib/jenkins/workspace/aniket/scripts:/liquibase/scripts
-      - /var/lib/jenkins/workspace/aniket/postgresql-42.7.3.jar:/liquibase/lib/postgresql.jar
+      - ./config/changelog.xml:/liquibase/changelog.xml
+      - ./scripts:/liquibase/scripts
 
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    depends_on:
+      - lobo-db
+
+    networks:
+      - lobo-net
+
+networks:
+  lobo-net:
