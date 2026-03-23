@@ -10,13 +10,16 @@ services:
       --changelog-file=changelog.xml
       --username=postgres
       --password=postgres
-      --url=jdbc:postgresql://localhost:5432/postgres
+      --url=jdbc:postgresql://host.docker.internal:5432/postgres
       --classpath=/liquibase/classpath/postgresql.jar
 
     volumes:
       - ./config/changelog.xml:/liquibase/changelog.xml
       - ./scripts:/liquibase/scripts
-      - ./postgresql-42.7.3.jar:/liquibase/classpath/postgresql.jar   # ✅ IMPORTANT
+      - ./postgresql-42.7.3.jar:/liquibase/classpath/postgresql.jar
+
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
     networks:
       - lobo-net
