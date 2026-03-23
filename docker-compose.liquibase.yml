@@ -1,15 +1,20 @@
 services:
   lobo-liquibase:
     container_name: lobo-liquibase
-
-    image: liquibase/liquibase   # ✅ IMPORTANT (not latest)
+    image: liquibase/liquibase:5.0.2
 
     command: >
-      update
+      sh -c "
+      wget -q https://jdbc.postgresql.org/download/postgresql-42.7.3.jar -O /liquibase/postgresql.jar &&
+      liquibase
+      --driver=org.postgresql.Driver
+      --classpath=/liquibase/postgresql.jar
       --changelog-file=changelog.xml
       --username=postgres
       --password=postgres
       --url=jdbc:postgresql://lobo-db:5432/postgres
+      update
+      "
 
     volumes:
       - ./config/changelog.xml:/liquibase/changelog.xml
