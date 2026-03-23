@@ -1,13 +1,13 @@
-version: "3.1"
-
 services:
   lobo-liquibase:
     container_name: lobo-liquibase
-    image: liquibase/liquibase
+    image: liquibase/liquibase:latest
 
     command: >
       update
       --changelog-file=changelog.xml
+      --driver=org.postgresql.Driver
+      --classpath=/liquibase/lib/postgresql.jar
       --username=postgres
       --password=postgres
       --url=jdbc:postgresql://host.docker.internal:5432/postgres
@@ -15,13 +15,7 @@ services:
     volumes:
       - ./config/changelog.xml:/liquibase/changelog.xml
       - ./scripts:/liquibase/scripts
-      - ./postgresql-42.7.3.jar:/liquibase/lib/postgresql.jar   # ✅ FIX HERE
+      - ./postgresql-42.7.3.jar:/liquibase/lib/postgresql.jar
 
     extra_hosts:
       - "host.docker.internal:host-gateway"
-
-    networks:
-      - lobo-net
-
-networks:
-  lobo-net:
