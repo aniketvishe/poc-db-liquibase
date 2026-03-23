@@ -1,6 +1,5 @@
 services:
   lobo-liquibase:
-    container_name: lobo-liquibase
     image: liquibase/liquibase:4.23
 
     command: >
@@ -14,11 +13,5 @@ services:
       - ./config/changelog.xml:/liquibase/changelog.xml
       - ./scripts:/liquibase/scripts
 
-    depends_on:
-      - lobo-db
-
     networks:
       - lobo-net
-
-networks:
-  lobo-net:
