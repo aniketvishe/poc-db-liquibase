@@ -11,12 +11,11 @@ services:
       --username=postgres
       --password=postgres
       --url=jdbc:postgresql://host.docker.internal:5432/postgres
-      --classpath=/liquibase/classpath/postgresql.jar
 
     volumes:
       - ./config/changelog.xml:/liquibase/changelog.xml
       - ./scripts:/liquibase/scripts
-      - ./postgresql-42.7.3.jar:/liquibase/classpath/postgresql.jar
+      - ./postgresql-42.7.3.jar:/liquibase/lib/postgresql.jar   # ✅ FIX HERE
 
     extra_hosts:
       - "host.docker.internal:host-gateway"
