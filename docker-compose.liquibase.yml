@@ -1,7 +1,8 @@
 services:
   lobo-liquibase:
     container_name: lobo-liquibase
-    image: liquibase/liquibase:4.23
+
+    image: liquibase/liquibase:4.23   # ✅ IMPORTANT (not latest)
 
     command: >
       update
@@ -19,4 +20,4 @@ services:
 
 networks:
   lobo-net:
-    external: true   # ✅ IMPORTANT
+    external: true
