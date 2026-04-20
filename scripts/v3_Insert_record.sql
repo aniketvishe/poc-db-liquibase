@@ -1,3 +1,4 @@
 INSERT INTO TESTE_LIQUIBASE (Id, Teste) VALUES (1, 'First Record');
 INSERT INTO TESTE_LIQUIBASE (Id, Teste) VALUES (2, 'Second Record');
 INSERT INTO TESTE_LIQUIBASE (Id, Teste) VALUES (3, 'Third Record');
+INSERT INTO TESTE_LIQUIBASE (Id, Teste) VALUES (4, 'Forth Record');
