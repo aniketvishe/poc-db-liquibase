@@ -13,8 +13,6 @@ services:
 
     volumes:
       - ./liquibase:/liquibase/changelog
-      - ./drivers:/liquibase/lib   
+      - ./drivers:/liquibase/lib
 
     working_dir: /liquibase/changelog
-
-    user: "1000:1000"   
