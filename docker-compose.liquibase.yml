@@ -8,11 +8,11 @@ services:
       --username=system
       --password=oracle
       --changelog-file=changelog.xml
-      --log-level=info
+      --log-level=debug
       update
 
     volumes:
-      - ./config:/config
+      - ./config:/changelog.xml
       - ./drivers:/liquibase/lib
 
     working_dir: /liquibase/changelog
