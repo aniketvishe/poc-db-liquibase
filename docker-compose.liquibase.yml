@@ -1,8 +1,6 @@
-version: '3.8'
-
 services:
   lobo-liquibase:
-    image: liquibase/liquibase:latest
+    image: liquibase/liquibase:5.0.2
     container_name: lobo-liquibase
 
     command: >
@@ -10,8 +8,11 @@ services:
       --username=system
       --password=oracle
       --changeLogFile=changelog.xml
+      --log-level=info
       update
 
     volumes:
       - ./liquibase:/liquibase/changelog
       - ./drivers/ojdbc8.jar:/liquibase/lib/ojdbc8.jar
+
+    working_dir: /liquibase/changelog
