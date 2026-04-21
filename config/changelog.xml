@@ -10,7 +10,7 @@
         <sqlFile
             path="scripts/v1_Insert_record.sql"
             relativeToChangelogFile="true"
-            splitStatements="true"
+            splitStatements="false"
             endDelimiter=";"
         />
     </changeSet>

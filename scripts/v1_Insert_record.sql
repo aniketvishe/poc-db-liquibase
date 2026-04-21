@@ -1,4 +1,1 @@
-INSERT INTO EMP (ID, NAME) VALUES (5, 'First Record');
-INSERT INTO EMP (ID, NAME) VALUES (6, 'Second Record');
-INSERT INTO EMP (ID, NAME) VALUES (7, 'Third Record');
 INSERT INTO EMP (ID, NAME) VALUES (9, 'Fourth Record');
