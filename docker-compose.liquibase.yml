@@ -8,7 +8,7 @@ services:
       --username=system
       --password=oracle
       --changeLogFile=changelog.xml
-      --log-level=debug
+      --log-level=info
       update
 
     volumes:
