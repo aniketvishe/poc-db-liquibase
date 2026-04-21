@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   lobo-liquibase:
     image: liquibase/liquibase:5.0.2
@@ -7,12 +9,13 @@ services:
       --url=jdbc:oracle:thin:@//192.168.2.185:1521/XE
       --username=system
       --password=oracle
-      --changeLogFile=/config/changelog.xml
+      --changeLogFile=changelog.xml
       --log-level=debug
       update
 
     volumes:
-      - ./config:/changelog
+      - ./config:/liquibase/changelog
+      - ./scripts:/liquibase/changelog/scripts
       - ./drivers:/liquibase/lib
 
-    working_dir: /config/
+    working_dir: /liquibase/changelog
