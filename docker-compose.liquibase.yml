@@ -7,12 +7,12 @@ services:
       --url=jdbc:oracle:thin:@//192.168.2.185:1521/XE
       --username=system
       --password=oracle
-      --changeLogFile=config/changelog.xml
+      --changelog-file=changelog.xml
       --log-level=info
       update
 
     volumes:
-      - ./liquibase:/liquibase/changelog
+      - ./config:/changelog
       - ./drivers:/liquibase/lib
 
     working_dir: /liquibase/changelog
