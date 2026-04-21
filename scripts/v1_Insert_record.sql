@@ -2,8 +2,7 @@
 
 --changeset aniket:1 splitStatements:true
 
-INSERT INTO EMP (ID, NAME) VALUES (1, 'First Record');
-INSERT INTO EMP (ID, NAME) VALUES (2, 'Second Record');
-INSERT INTO EMP (ID, NAME) VALUES (3, 'Third Record');
-INSERT INTO EMP (ID, NAME) VALUES (4, 'Forth Record');
-INSERT INTO EMP (ID, NAME) VALUES (5, 'Aniket V');
+INSERT INTO EMP (ID, NAME) VALUES (5, 'First Record');
+INSERT INTO EMP (ID, NAME) VALUES (6, 'Second Record');
+INSERT INTO EMP (ID, NAME) VALUES (7, 'Third Record');
+INSERT INTO EMP (ID, NAME) VALUES (8, 'Forth Record');
