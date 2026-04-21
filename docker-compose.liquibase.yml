@@ -7,7 +7,7 @@ services:
       --url=jdbc:oracle:thin:@//192.168.2.185:1521/XE
       --username=system
       --password=oracle
-      --changeLogFile=/liquibase/changelog.xml
+      --changeLogFile=/config/changelog.xml
       --log-level=info
       update
 
