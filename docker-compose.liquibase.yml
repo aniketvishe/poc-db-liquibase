@@ -12,7 +12,7 @@ services:
       update
 
     volumes:
-      - ./config:/changelog
+      - ./config:/config
       - ./drivers:/liquibase/lib
 
     working_dir: /liquibase/changelog
