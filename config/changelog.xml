@@ -6,7 +6,13 @@
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <property name="liquibase.sql.splitStatements" value="true"/>
-    <includeAll path="scripts"/>
+    <changeSet id="insert-emp-data" author="bhanu">
+        <sqlFile
+            path="scripts/v1_Insert_record.sql"
+            relativeToChangelogFile="true"
+            splitStatements="true"
+            endDelimiter=";"
+        />
+    </changeSet>
 
 </databaseChangeLog>
