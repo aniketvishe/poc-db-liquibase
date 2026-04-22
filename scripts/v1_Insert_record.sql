@@ -1,1 +1,2 @@
 INSERT INTO EMP (ID, NAME) VALUES (9, 'Fourth Record');
+INSERT INTO EMP (ID, NAME) VALUES (10, 'ten Record');
