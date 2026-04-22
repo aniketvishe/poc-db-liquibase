@@ -8,7 +8,7 @@
 
     <changeSet id="insert-emp-data" author="m2">
         <sqlFile
-            path="scripts/*"
+            path="scripts/v1_Insert_record.sql"
             relativeToChangelogFile="true"
             splitStatements="true"
             endDelimiter=";"
