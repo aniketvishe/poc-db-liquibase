@@ -1,18 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-
-<databaseChangeLog
-  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
          http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
-
-    <changeSet id="insert-emp-data" author="m2">
-        <sqlFile
-            path="scripts/v1_Insert_record.sql"
-            relativeToChangelogFile="true"
-            splitStatements="true"
-            endDelimiter=";"
-        />
-    </changeSet>
-
+	<changeSet id="insert-emp-data-v2" author="m2">
+		<sqlFile path="scripts/v2_Insert_record.sql" relativeToChangelogFile="true" />
+	</changeSet>
 </databaseChangeLog>
