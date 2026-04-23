@@ -55,7 +55,7 @@
                 file="/scripts/new_file.csv"
                 tableName="master_table"
                 separator=","
-                relativeToChangelogFile="false"
+                relativeToChangelogFile="true"
                 usePreparedStatements="true"
                 batchSize="1000"/>
 
