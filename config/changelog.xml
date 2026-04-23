@@ -52,7 +52,7 @@
          ========================= -->
     <changeSet id="03-load-new-csv" author="Tejas" dbms="mysql" runAlways="true">
         <loadData
-                file="/absolute/path/new_file.csv"
+                file="/scripts/new_file.csv"
                 tableName="master_table"
                 separator=","
                 relativeToChangelogFile="false"
