@@ -1,9 +1,70 @@
-<?xml version="1.0" encoding="UTF-8"?>  
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-<databaseChangeLog  
-  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"  
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
-  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
-         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">  
-    <includeAll  path="/scripts/"/>  
+    <!-- =========================================================
+         TABLE: master_table
+         BACKUP TABLE: master_table_backup
+         ========================================================= -->
+
+    <!-- =========================
+         STEP 0: Create backup table (if not exists)
+         ========================= -->
+    <changeSet id="00-create-backup-table" author="Tejas" dbms="mysql">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="master_table_backup"/>
+            </not>
+        </preConditions>
+
+        <sql>
+            CREATE TABLE master_table_backup LIKE master_table;
+        </sql>
+    </changeSet>
+
+
+    <!-- =========================
+         STEP 1: Backup existing data
+         ========================= -->
+    <changeSet id="01-backup-data" author="Tejas" dbms="mysql" runAlways="true">
+        <sql>
+            TRUNCATE TABLE master_table_backup;
+            INSERT INTO master_table_backup
+            SELECT * FROM master_table;
+        </sql>
+    </changeSet>
+
+
+    <!-- =========================
+         STEP 2: Truncate main table
+         ========================= -->
+    <changeSet id="02-truncate-main-table" author="Tejas" dbms="mysql" runAlways="true">
+        <sql>
+            TRUNCATE TABLE master_table;
+        </sql>
+    </changeSet>
+
+
+    <!-- =========================
+         STEP 3: Load NEW CSV data
+         ========================= -->
+    <changeSet id="03-load-new-csv" author="Tejas" dbms="mysql" runAlways="true">
+        <loadData
+                file="/absolute/path/new_file.csv"
+                tableName="master_table"
+                separator=","
+                relativeToChangelogFile="false"
+                usePreparedStatements="true"
+                batchSize="1000"/>
+
+        <!-- ROLLBACK: restore old data -->
+        <rollback>
+            DELETE FROM master_table;
+            INSERT INTO master_table
+            SELECT * FROM master_table_backup;
+        </rollback>
+    </changeSet>
+
 </databaseChangeLog>
