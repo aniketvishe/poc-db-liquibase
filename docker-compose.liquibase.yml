@@ -9,6 +9,8 @@ services:
       --url=jdbc:oracle:thin:@//192.168.2.185:1521/XE
       --username=system
       --password=oracle
+      --driver=oracle.jdbc.OracleDriver
+      --classpath=/liquibase/lib/ojdbc8.jar
       --changeLogFile=changelog.xml
       --log-level=debug
       update
@@ -16,6 +18,6 @@ services:
     volumes:
       - ./config:/liquibase/changelog
       - ./scripts:/liquibase/changelog/scripts
-      - ./drivers:/drivers/ojdbc8.jar
+      - ./drivers:/liquibase/lib   # ✅ FIXED
 
     working_dir: /liquibase/changelog
