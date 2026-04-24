@@ -5,22 +5,24 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <!-- =========================================================
-         TABLE: master_table
-         BACKUP TABLE: master_table_backup
+         TABLE: MASTER_TABLE
+         BACKUP TABLE: MASTER_TABLE_BACKUP
          ========================================================= -->
+
 
     <!-- =========================
          STEP 0: Create backup table (if not exists)
          ========================= -->
-    <changeSet id="00-create-backup-table" author="Tejas" dbms="mysql">
+    <changeSet id="00-create-backup-table" author="Tejas" dbms="oracle">
         <preConditions onFail="MARK_RAN">
             <not>
-                <tableExists tableName="master_table_backup"/>
+                <tableExists tableName="MASTER_TABLE_BACKUP"/>
             </not>
         </preConditions>
 
         <sql>
-            CREATE TABLE master_table_backup LIKE master_table;
+            CREATE TABLE MASTER_TABLE_BACKUP AS
+            SELECT * FROM MASTER_TABLE WHERE 1=2;
         </sql>
     </changeSet>
 
@@ -28,11 +30,12 @@
     <!-- =========================
          STEP 1: Backup existing data
          ========================= -->
-    <changeSet id="01-backup-data" author="Tejas" dbms="mysql" runAlways="true">
+    <changeSet id="01-backup-data" author="Tejas" dbms="oracle" runAlways="true">
         <sql>
-            TRUNCATE TABLE master_table_backup;
-            INSERT INTO master_table_backup
-            SELECT * FROM master_table;
+            DELETE FROM MASTER_TABLE_BACKUP;
+            INSERT INTO MASTER_TABLE_BACKUP
+            SELECT * FROM MASTER_TABLE;
+            COMMIT;
         </sql>
     </changeSet>
 
@@ -40,9 +43,9 @@
     <!-- =========================
          STEP 2: Truncate main table
          ========================= -->
-    <changeSet id="02-truncate-main-table" author="Tejas" dbms="mysql" runAlways="true">
+    <changeSet id="02-truncate-main-table" author="Tejas" dbms="oracle" runAlways="true">
         <sql>
-            TRUNCATE TABLE master_table;
+            TRUNCATE TABLE MASTER_TABLE;
         </sql>
     </changeSet>
 
@@ -50,20 +53,22 @@
     <!-- =========================
          STEP 3: Load NEW CSV data
          ========================= -->
-    <changeSet id="03-load-new-csv" author="Tejas" dbms="mysql" runAlways="true">
+    <changeSet id="03-load-new-csv" author="Tejas" dbms="oracle" runAlways="true">
+
         <loadData
-                file="/scripts/new_file.csv"
-                tableName="master_table"
+                file="/absolute/path/new_file.csv"
+                tableName="MASTER_TABLE"
                 separator=","
-                relativeToChangelogFile="true"
+                relativeToChangelogFile="false"
                 usePreparedStatements="true"
                 batchSize="1000"/>
 
-        <!-- ROLLBACK: restore old data -->
+        <!-- Rollback: restore old data -->
         <rollback>
-            DELETE FROM master_table;
-            INSERT INTO master_table
-            SELECT * FROM master_table_backup;
+            DELETE FROM MASTER_TABLE;
+            INSERT INTO MASTER_TABLE
+            SELECT * FROM MASTER_TABLE_BACKUP;
+            COMMIT;
         </rollback>
     </changeSet>
 
