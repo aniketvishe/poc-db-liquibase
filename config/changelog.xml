@@ -56,10 +56,10 @@
     <changeSet id="03-load-new-csv" author="Tejas" dbms="oracle" runAlways="true">
 
         <loadData
-                file="/absolute/path/new_file.csv"
+                file="scripts/new_file.csv"
                 tableName="MASTER_TABLE"
                 separator=","
-                relativeToChangelogFile="false"
+                relativeToChangelogFile="true"
                 usePreparedStatements="true"
                 batchSize="1000"/>
 
