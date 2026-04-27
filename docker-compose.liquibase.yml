@@ -4,13 +4,16 @@ services:
     container_name: lobo-liquibase
 
     command: >
+      sh -c "
+      liquibase
       --url=jdbc:oracle:thin:@//192.168.2.185:1521/XE
       --username=system
       --password=oracle
       --driver=oracle.jdbc.OracleDriver
       --changeLogFile=changelog.xml
       --log-level=info
-      update
+      update && sleep 300
+      "
 
     volumes:
       - ./config:/liquibase/changelog
