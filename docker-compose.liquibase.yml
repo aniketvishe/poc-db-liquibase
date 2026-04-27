@@ -12,7 +12,9 @@ services:
       --driver=oracle.jdbc.OracleDriver
       --changeLogFile=changelog.xml
       --log-level=info
-      update && sleep 300
+      update;
+      echo 'Liquibase finished... keeping container alive';
+      sleep 300
       "
 
     volumes:
@@ -21,6 +23,5 @@ services:
       - ./ojdbc8.jar:/liquibase/lib/ojdbc8.jar
 
     working_dir: /liquibase/changelog
-
     tty: true
     stdin_open: true
