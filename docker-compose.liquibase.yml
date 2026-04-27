@@ -10,7 +10,6 @@ services:
       --username=system
       --password=oracle
       --driver=oracle.jdbc.OracleDriver
-      --classpath=/liquibase/lib/ojdbc8.jar
       --changeLogFile=changelog.xml
       --log-level=debug
       update
