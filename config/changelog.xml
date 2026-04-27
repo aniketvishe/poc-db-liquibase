@@ -7,7 +7,7 @@
     <!-- =========================================================
          STEP 0: Create backup table if not exists
     ========================================================== -->
-    <changeSet id="00-create-backup-table" author="Aniket" dbms="oracle">
+    <changeSet id="00-create-backup-table" author="Aniket" dbms="oracle" runOnChange="true">
         <preConditions onFail="CONTINUE">
             <not>
                 <tableExists tableName="MASTER_TABLE_BACKUP" schemaName="SYSTEM"/>
