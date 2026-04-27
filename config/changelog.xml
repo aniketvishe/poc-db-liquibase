@@ -5,41 +5,57 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <!-- =========================================================
-         TABLE: MASTER_TABLE
-         BACKUP TABLE: MASTER_TABLE_BACKUP
+         STEP 0: Ensure backup table exists (SAFE WAY)
          ========================================================= -->
-
-    <!-- STEP 0: Create backup table (if not exists) -->
-    <changeSet id="00-create-backup-table" author="Tejas" dbms="oracle">
-        <preConditions onFail="CONTINUE">
-            <not>
-                <tableExists tableName="MASTER_TABLE_BACKUP"/>
-            </not>
-        </preConditions>
+    <changeSet id="00-create-backup-table" author="Tejas" dbms="oracle" runAlways="true">
 
         <sql>
-            CREATE TABLE MASTER_TABLE_BACKUP AS
-            SELECT * FROM MASTER_TABLE WHERE 1=2;
+            BEGIN
+                EXECUTE IMMEDIATE '
+                    CREATE TABLE MASTER_TABLE_BACKUP AS
+                    SELECT * FROM MASTER_TABLE WHERE 1=2
+                ';
+            EXCEPTION
+                WHEN OTHERS THEN
+                    IF SQLCODE != -955 THEN
+                        RAISE;
+                    END IF;
+            END;
         </sql>
+
     </changeSet>
 
-    <!-- STEP 1: Backup existing data -->
+
+    <!-- =========================================================
+         STEP 1: Backup existing data
+         ========================================================= -->
     <changeSet id="01-backup-data" author="Tejas" dbms="oracle" runAlways="true">
+
         <sql>
             DELETE FROM MASTER_TABLE_BACKUP;
+
             INSERT INTO MASTER_TABLE_BACKUP
             SELECT * FROM MASTER_TABLE;
         </sql>
+
     </changeSet>
 
-    <!-- STEP 2: Clean main table -->
+
+    <!-- =========================================================
+         STEP 2: Clean main table
+         ========================================================= -->
     <changeSet id="02-clean-main-table" author="Tejas" dbms="oracle" runAlways="true">
+
         <sql>
             DELETE FROM MASTER_TABLE;
         </sql>
+
     </changeSet>
 
-    <!-- STEP 3: Load NEW CSV data -->
+
+    <!-- =========================================================
+         STEP 3: Load CSV data
+         ========================================================= -->
     <changeSet id="03-load-new-csv" author="Tejas" dbms="oracle" runAlways="true">
 
         <loadData
@@ -53,6 +69,7 @@
         <!-- Rollback -->
         <rollback>
             DELETE FROM MASTER_TABLE;
+
             INSERT INTO MASTER_TABLE
             SELECT * FROM MASTER_TABLE_BACKUP;
         </rollback>
