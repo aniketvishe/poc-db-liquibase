@@ -9,10 +9,7 @@
          BACKUP TABLE: MASTER_TABLE_BACKUP
          ========================================================= -->
 
-
-    <!-- =========================
-         STEP 0: Create backup table (if not exists)
-         ========================= -->
+    <!-- STEP 0: Create backup table (if not exists) -->
     <changeSet id="00-create-backup-table" author="Tejas" dbms="oracle">
         <preConditions onFail="MARK_RAN">
             <not>
@@ -26,50 +23,40 @@
         </sql>
     </changeSet>
 
-
-    <!-- =========================
-         STEP 1: Backup existing data
-         ========================= -->
+    <!-- STEP 1: Backup existing data -->
     <changeSet id="01-backup-data" author="Tejas" dbms="oracle" runAlways="true">
         <sql>
             DELETE FROM MASTER_TABLE_BACKUP;
             INSERT INTO MASTER_TABLE_BACKUP
             SELECT * FROM MASTER_TABLE;
-            COMMIT;
         </sql>
     </changeSet>
 
-
-    <!-- =========================
-         STEP 2: Truncate main table
-         ========================= -->
-    <changeSet id="02-truncate-main-table" author="Tejas" dbms="oracle" runAlways="true">
+    <!-- STEP 2: Clean main table -->
+    <changeSet id="02-clean-main-table" author="Tejas" dbms="oracle" runAlways="true">
         <sql>
-            TRUNCATE TABLE MASTER_TABLE;
+            DELETE FROM MASTER_TABLE;
         </sql>
     </changeSet>
 
-
-    <!-- =========================
-         STEP 3: Load NEW CSV data
-         ========================= -->
+    <!-- STEP 3: Load NEW CSV data -->
     <changeSet id="03-load-new-csv" author="Tejas" dbms="oracle" runAlways="true">
 
         <loadData
                 file="scripts/new_file.csv"
                 tableName="MASTER_TABLE"
                 separator=","
-                relativeToChangelogFile="false"
+                relativeToChangelogFile="true"
                 usePreparedStatements="true"
                 batchSize="1000"/>
 
-        <!-- Rollback: restore old data -->
+        <!-- Rollback -->
         <rollback>
             DELETE FROM MASTER_TABLE;
             INSERT INTO MASTER_TABLE
             SELECT * FROM MASTER_TABLE_BACKUP;
-            COMMIT;
         </rollback>
+
     </changeSet>
 
 </databaseChangeLog>
