@@ -1,1 +1,1 @@
-INSERT INTO EMP (ID, NAME) VALUES (13, '13 Record');
+INSERT INTO master_table (ID, NAME) VALUES (13, '13 Record');
