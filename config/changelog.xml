@@ -5,7 +5,7 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <!-- =========================================================
-         STEP 0: Create backup table if not exists
+         STEP 0: Create backup table (same structure as source)
          ========================================================= -->
     <changeSet id="00-create-backup-table" author="Tejas" dbms="oracle">
 
@@ -15,11 +15,10 @@
             </not>
         </preConditions>
 
-        <createTable tableName="MASTER_TABLE_BACKUP">
-            <column name="ID" type="NUMBER"/>
-            <column name="NAME" type="VARCHAR2(255)"/>
-            <column name="CREATED_AT" type="TIMESTAMP"/>
-        </createTable>
+        <sql>
+            CREATE TABLE MASTER_TABLE_BACKUP AS
+            SELECT * FROM MASTER_TABLE WHERE 1=2;
+        </sql>
 
     </changeSet>
 
@@ -28,6 +27,10 @@
          STEP 1: Backup existing data
          ========================================================= -->
     <changeSet id="01-backup-data" author="Tejas" dbms="oracle" runAlways="true">
+
+        <preConditions onFail="HALT">
+            <tableExists tableName="MASTER_TABLE_BACKUP"/>
+        </preConditions>
 
         <sql>
             DELETE FROM MASTER_TABLE_BACKUP;
@@ -61,12 +64,7 @@
                 separator=","
                 relativeToChangelogFile="true"
                 usePreparedStatements="true"
-                batchSize="1000">
-
-            <!-- Optional: auto-fill CREATED_AT -->
-            <column name="CREATED_AT" defaultValueComputed="CURRENT_TIMESTAMP"/>
-
-        </loadData>
+                batchSize="1000"/>
 
         <!-- Rollback -->
         <rollback>
