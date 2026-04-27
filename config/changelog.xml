@@ -4,10 +4,12 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <!-- STEP 0: Always ensure backup table exists -->
+    <!-- =========================================================
+         STEP 0: Always ensure backup table exists (Oracle-safe)
+         ========================================================= -->
     <changeSet id="00-create-backup-table" author="Aniket" dbms="oracle" runAlways="true">
 
-        <sql>
+        <sql endDelimiter="/">
             BEGIN
                 EXECUTE IMMEDIATE 'CREATE TABLE MASTER_TABLE_BACKUP AS SELECT * FROM MASTER_TABLE WHERE 1=2';
             EXCEPTION
@@ -16,12 +18,15 @@
                         RAISE;
                     END IF;
             END;
+            /
         </sql>
 
     </changeSet>
 
 
-    <!-- STEP 1: Backup data -->
+    <!-- =========================================================
+         STEP 1: Backup existing data
+         ========================================================= -->
     <changeSet id="01-backup-data" author="Aniket" dbms="oracle" runAlways="true">
 
         <sql>
@@ -33,7 +38,9 @@
     </changeSet>
 
 
-    <!-- STEP 2: Clean main table -->
+    <!-- =========================================================
+         STEP 2: Clean main table
+         ========================================================= -->
     <changeSet id="02-clean-main-table" author="Aniket" dbms="oracle" runAlways="true">
 
         <sql>
@@ -43,7 +50,9 @@
     </changeSet>
 
 
-    <!-- STEP 3: Load CSV -->
+    <!-- =========================================================
+         STEP 3: Load CSV data
+         ========================================================= -->
     <changeSet id="03-load-new-csv" author="Aniket" dbms="oracle" runAlways="true">
 
         <loadData
@@ -57,6 +66,7 @@
 
         </loadData>
 
+        <!-- Rollback -->
         <rollback>
             DELETE FROM MASTER_TABLE;
             INSERT INTO MASTER_TABLE
