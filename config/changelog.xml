@@ -9,7 +9,7 @@
          ========================================================= -->
     <changeSet id="00-create-backup-table" author="Tejas" dbms="oracle">
 
-        <preConditions onFail="MARK_RAN">
+        <preConditions onFail="CONTINUE">
             <not>
                 <tableExists tableName="MASTER_TABLE_BACKUP"/>
             </not>
