@@ -7,8 +7,8 @@
     <!-- =========================================================
          STEP 0: Create backup table if not exists
     ========================================================== -->
-    <changeSet id="00-create-backup-table" author="Aniket1" dbms="oracle">
-        <preConditions onFail="MARK_RAN">
+    <changeSet id="00-create-backup-table" author="Aniket" dbms="oracle">
+        <preConditions onFail="CONTINUE">
             <not>
                 <tableExists tableName="MASTER_TABLE_BACKUP" schemaName="SYSTEM"/>
             </not>
@@ -24,7 +24,7 @@
          STEP 1: Backup existing data (safe + repeatable)
     ========================================================== -->
     <changeSet id="01-backup-data" author="Aniket" dbms="oracle" runAlways="true">
-        <preConditions onFail="MARK_RAN">
+        <preConditions onFail="CONTINUE">
             <tableExists tableName="MASTER_TABLE_BACKUP" schemaName="SYSTEM"/>
         </preConditions>
 
