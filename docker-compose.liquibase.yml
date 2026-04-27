@@ -18,6 +18,6 @@ services:
     volumes:
       - ./config:/liquibase/changelog
       - ./scripts:/liquibase/changelog/scripts
-      - ./drivers:/liquibase/lib   # ✅ FIXED
+      - ./ojdbc8.jar:/liquibase/lib/ojdbc8.jar
 
     working_dir: /liquibase/changelog
