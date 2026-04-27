@@ -4,33 +4,25 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <!-- =========================================================
-         STEP 0: Create backup table if not exists
-         ========================================================= -->
-    <changeSet id="00-create-backup-table" author="Aniket" dbms="oracle">
-
-        <preConditions onFail="MARK_RAN">
-            <not>
-                <tableExists tableName="MASTER_TABLE_BACKUP"/>
-            </not>
-        </preConditions>
+    <!-- STEP 0: Always ensure backup table exists -->
+    <changeSet id="00-create-backup-table" author="Aniket" dbms="oracle" runAlways="true">
 
         <sql>
-            CREATE TABLE MASTER_TABLE_BACKUP AS
-            SELECT * FROM MASTER_TABLE WHERE 1=2;
+            BEGIN
+                EXECUTE IMMEDIATE 'CREATE TABLE MASTER_TABLE_BACKUP AS SELECT * FROM MASTER_TABLE WHERE 1=2';
+            EXCEPTION
+                WHEN OTHERS THEN
+                    IF SQLCODE != -955 THEN
+                        RAISE;
+                    END IF;
+            END;
         </sql>
 
     </changeSet>
 
 
-    <!-- =========================================================
-         STEP 1: Backup existing data
-         ========================================================= -->
+    <!-- STEP 1: Backup data -->
     <changeSet id="01-backup-data" author="Aniket" dbms="oracle" runAlways="true">
-
-        <preConditions onFail="HALT">
-            <tableExists tableName="MASTER_TABLE_BACKUP"/>
-        </preConditions>
 
         <sql>
             TRUNCATE TABLE MASTER_TABLE_BACKUP;
@@ -41,9 +33,7 @@
     </changeSet>
 
 
-    <!-- =========================================================
-         STEP 2: Clean main table
-         ========================================================= -->
+    <!-- STEP 2: Clean main table -->
     <changeSet id="02-clean-main-table" author="Aniket" dbms="oracle" runAlways="true">
 
         <sql>
@@ -53,9 +43,7 @@
     </changeSet>
 
 
-    <!-- =========================================================
-         STEP 3: Load CSV data
-         ========================================================= -->
+    <!-- STEP 3: Load CSV -->
     <changeSet id="03-load-new-csv" author="Aniket" dbms="oracle" runAlways="true">
 
         <loadData
@@ -69,7 +57,6 @@
 
         </loadData>
 
-        <!-- Rollback -->
         <rollback>
             DELETE FROM MASTER_TABLE;
             INSERT INTO MASTER_TABLE
