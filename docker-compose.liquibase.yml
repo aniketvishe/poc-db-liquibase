@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   lobo-liquibase:
     image: liquibase/liquibase:5.0.2
@@ -11,7 +9,7 @@ services:
       --password=oracle
       --driver=oracle.jdbc.OracleDriver
       --changeLogFile=changelog.xml
-      --log-level=debug
+      --log-level=info
       update
 
     volumes:
@@ -20,3 +18,6 @@ services:
       - ./ojdbc8.jar:/liquibase/lib/ojdbc8.jar
 
     working_dir: /liquibase/changelog
+
+    tty: true
+    stdin_open: true
