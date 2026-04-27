@@ -5,19 +5,22 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <!-- =========================================================
-         STEP 0: Create backup table (same structure as source)
+         STEP 0: Ensure backup table always exists
          ========================================================= -->
-    <changeSet id="00-create-backup-table" author="Tejas" dbms="oracle">
+    <changeSet id="00-create-backup-table" author="Tejas" dbms="oracle" runAlways="true">
 
-        <preConditions onFail="CONTINUE">
-            <not>
-                <tableExists tableName="MASTER_TABLE_BACKUP"/>
-            </not>
-        </preConditions>
-
-        <sql>
-            CREATE TABLE MASTER_TABLE_BACKUP AS
-            SELECT * FROM MASTER_TABLE WHERE 1=2;
+        <sql splitStatements="false">
+            BEGIN
+                EXECUTE IMMEDIATE '
+                    CREATE TABLE MASTER_TABLE_BACKUP AS
+                    SELECT * FROM MASTER_TABLE WHERE 1=2
+                ';
+            EXCEPTION
+                WHEN OTHERS THEN
+                    IF SQLCODE != -955 THEN
+                        RAISE;
+                    END IF;
+            END;
         </sql>
 
     </changeSet>
@@ -27,10 +30,6 @@
          STEP 1: Backup existing data
          ========================================================= -->
     <changeSet id="01-backup-data" author="Tejas" dbms="oracle" runAlways="true">
-
-        <preConditions onFail="HALT">
-            <tableExists tableName="MASTER_TABLE_BACKUP"/>
-        </preConditions>
 
         <sql>
             DELETE FROM MASTER_TABLE_BACKUP;
@@ -42,7 +41,7 @@
 
 
     <!-- =========================================================
-         STEP 2: Clean main table
+         STEP 2: Clean main table (safe for Oracle)
          ========================================================= -->
     <changeSet id="02-clean-main-table" author="Tejas" dbms="oracle" runAlways="true">
 
