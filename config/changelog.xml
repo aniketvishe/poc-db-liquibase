@@ -4,74 +4,79 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <!-- =========================================================
-         STEP 0: Ensure backup table always exists
-         ========================================================= -->
-    <changeSet id="00-create-backup-table" author="Tejas" dbms="oracle" runAlways="true">
-
-        <sql splitStatements="false">
-            BEGIN
-                EXECUTE IMMEDIATE '
-                    CREATE TABLE MASTER_TABLE_BACKUP AS
-                    SELECT * FROM MASTER_TABLE WHERE 1=2
-                ';
-            EXCEPTION
-                WHEN OTHERS THEN
-                    IF SQLCODE != -955 THEN
-                        RAISE;
-                    END IF;
-            END;
-        </sql>
-
-    </changeSet>
-
-
-    <!-- =========================================================
-         STEP 1: Backup existing data
-         ========================================================= -->
-    <changeSet id="01-backup-data" author="Tejas" dbms="oracle" runAlways="true">
+    <!-- =========================
+         STEP 1: Create staging table
+         ========================= -->
+    <changeSet id="01-create-staging" author="Tejas" dbms="oracle">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="STG_CUSTOMER"/>
+            </not>
+        </preConditions>
 
         <sql>
-            DELETE FROM MASTER_TABLE_BACKUP;
-            INSERT INTO MASTER_TABLE_BACKUP
-            SELECT * FROM MASTER_TABLE;
+            CREATE TABLE STG_CUSTOMER
+            AS SELECT * FROM CUSTOMER WHERE 1=0
         </sql>
-
     </changeSet>
 
-
-    <!-- =========================================================
-         STEP 2: Clean main table (safe for Oracle)
-         ========================================================= -->
-    <changeSet id="02-clean-main-table" author="Tejas" dbms="oracle" runAlways="true">
-
+    <!-- =========================
+         STEP 2: Clear staging
+         ========================= -->
+    <changeSet id="02-clear-staging" author="Tejas" dbms="oracle" runAlways="true">
         <sql>
-            DELETE FROM MASTER_TABLE;
+            TRUNCATE TABLE STG_CUSTOMER
         </sql>
-
     </changeSet>
 
-
-    <!-- =========================================================
-         STEP 3: Load CSV data
-         ========================================================= -->
-    <changeSet id="03-load-new-csv" author="Tejas" dbms="oracle" runAlways="true">
-
+    <!-- =========================
+         STEP 3: Load CSV into staging (WITH HEADERS)
+         ========================= -->
+    <changeSet id="03-load-csv" author="Tejas" dbms="oracle" runAlways="true">
         <loadData
-                file="scripts/new_file.csv"
-                tableName="MASTER_TABLE"
+                file="/path/to/your/file/customer.csv"
+                tableName="STG_CUSTOMER"
                 separator=","
-                relativeToChangelogFile="true"
-                usePreparedStatements="true"
-                batchSize="1000"/>
+                encoding="UTF-8"
+                relativeToChangelogFile="false">
 
-        <!-- Rollback -->
-        <rollback>
-            DELETE FROM MASTER_TABLE;
-            INSERT INTO MASTER_TABLE
-            SELECT * FROM MASTER_TABLE_BACKUP;
-        </rollback>
+            <!-- Header → Column Mapping -->
+            <column name="ID" header="ID"/>
+            <column name="NAME" header="NAME"/>
+            <column name="EMAIL" header="EMAIL"/>
+            <column name="PHONE" header="PHONE"/>
 
+        </loadData>
+    </changeSet>
+
+    <!-- =========================
+         STEP 4: Validate staging data
+         ========================= -->
+    <changeSet id="04-validate-staging" author="Tejas" dbms="oracle">
+        <preConditions onFail="HALT">
+            <sqlCheck expectedResult="1">
+                SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END FROM STG_CUSTOMER
+            </sqlCheck>
+        </preConditions>
+    </changeSet>
+
+    <!-- =========================
+         STEP 5: Truncate main table
+         ========================= -->
+    <changeSet id="05-truncate-main" author="Tejas" dbms="oracle">
+        <sql>
+            TRUNCATE TABLE CUSTOMER
+        </sql>
+    </changeSet>
+
+    <!-- =========================
+         STEP 6: Insert into main
+         ========================= -->
+    <changeSet id="06-insert-main" author="Tejas" dbms="oracle">
+        <sql>
+            INSERT INTO CUSTOMER
+            SELECT * FROM STG_CUSTOMER
+        </sql>
     </changeSet>
 
 </databaseChangeLog>
