@@ -24,5 +24,3 @@ services:
       - ./ojdbc8.jar:/liquibase/lib/ojdbc8.jar
 
     working_dir: /liquibase/changelog
-    tty: true
-    stdin_open: true
