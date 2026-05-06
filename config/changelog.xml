@@ -13,8 +13,8 @@
         <!-- Rollback restores original data -->
         <rollback>
             <loadData
-                file="/path/to/customer_backup.csv"
-                tableName="CUSTOMER"
+                file="/scripts/new.csv"
+                tableName="MASTER_TABLE"
                 separator=","
                 encoding="UTF-8">
 
@@ -32,8 +32,8 @@
     <changeSet id="02-load-updated" author="Tejas" dbms="oracle">
 
         <loadData
-                file="/path/to/customer_updated.csv"
-                tableName="CUSTOMER"
+                file="/scripts/new.csv"
+                tableName="MASTER_TABLE"
                 separator=","
                 encoding="UTF-8">
 
@@ -49,8 +49,8 @@
             <sql>TRUNCATE TABLE CUSTOMER</sql>
 
             <loadData
-                file="/path/to/customer_backup.csv"
-                tableName="CUSTOMER"
+                file="/scripts/new.csv"
+                tableName="MASTER_TABLE"
                 separator=","
                 encoding="UTF-8">
 
