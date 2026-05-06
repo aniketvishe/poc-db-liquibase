@@ -5,78 +5,62 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <!-- =========================
-         STEP 1: Create staging table
+         STEP 1: Clear table
          ========================= -->
-    <changeSet id="01-create-staging" author="Tejas" dbms="oracle">
-        <preConditions onFail="MARK_RAN">
-            <not>
-                <tableExists tableName="STG_CUSTOMER"/>
-            </not>
-        </preConditions>
+    <changeSet id="01-truncate" author="Tejas" dbms="oracle">
+        <sql>TRUNCATE TABLE CUSTOMER</sql>
 
-        <sql>
-            CREATE TABLE STG_CUSTOMER
-            AS SELECT * FROM CUSTOMER WHERE 1=0
-        </sql>
-    </changeSet>
-
-    <!-- =========================
-         STEP 2: Clear staging
-         ========================= -->
-    <changeSet id="02-clear-staging" author="Tejas" dbms="oracle" runAlways="true">
-        <sql>
-            TRUNCATE TABLE STG_CUSTOMER
-        </sql>
-    </changeSet>
-
-    <!-- =========================
-         STEP 3: Load CSV into staging (WITH HEADERS)
-         ========================= -->
-    <changeSet id="03-load-csv" author="Tejas" dbms="oracle" runAlways="true">
-        <loadData
-                file="/path/to/your/file/customer.csv"
-                tableName="STG_CUSTOMER"
+        <!-- Rollback restores original data -->
+        <rollback>
+            <loadData
+                file="/path/to/customer_backup.csv"
+                tableName="CUSTOMER"
                 separator=","
-                encoding="UTF-8"
-                relativeToChangelogFile="false">
+                encoding="UTF-8">
 
-            <!-- Header → Column Mapping -->
+                <column name="ID" header="ID"/>
+                <column name="NAME" header="NAME"/>
+                <column name="EMAIL" header="EMAIL"/>
+                <column name="PHONE" header="PHONE"/>
+            </loadData>
+        </rollback>
+    </changeSet>
+
+    <!-- =========================
+         STEP 2: Insert updated data
+         ========================= -->
+    <changeSet id="02-load-updated" author="Tejas" dbms="oracle">
+
+        <loadData
+                file="/path/to/customer_updated.csv"
+                tableName="CUSTOMER"
+                separator=","
+                encoding="UTF-8">
+
             <column name="ID" header="ID"/>
             <column name="NAME" header="NAME"/>
             <column name="EMAIL" header="EMAIL"/>
             <column name="PHONE" header="PHONE"/>
 
         </loadData>
-    </changeSet>
 
-    <!-- =========================
-         STEP 4: Validate staging data
-         ========================= -->
-    <changeSet id="04-validate-staging" author="Tejas" dbms="oracle">
-        <preConditions onFail="HALT">
-            <sqlCheck expectedResult="1">
-                SELECT CASE WHEN COUNT(*) > 0 THEN 1 ELSE 0 END FROM STG_CUSTOMER
-            </sqlCheck>
-        </preConditions>
-    </changeSet>
+        <!-- If rollback triggered -->
+        <rollback>
+            <sql>TRUNCATE TABLE CUSTOMER</sql>
 
-    <!-- =========================
-         STEP 5: Truncate main table
-         ========================= -->
-    <changeSet id="05-truncate-main" author="Tejas" dbms="oracle">
-        <sql>
-            TRUNCATE TABLE CUSTOMER
-        </sql>
-    </changeSet>
+            <loadData
+                file="/path/to/customer_backup.csv"
+                tableName="CUSTOMER"
+                separator=","
+                encoding="UTF-8">
 
-    <!-- =========================
-         STEP 6: Insert into main
-         ========================= -->
-    <changeSet id="06-insert-main" author="Tejas" dbms="oracle">
-        <sql>
-            INSERT INTO CUSTOMER
-            SELECT * FROM STG_CUSTOMER
-        </sql>
+                <column name="ID" header="ID"/>
+                <column name="NAME" header="NAME"/>
+                <column name="EMAIL" header="EMAIL"/>
+                <column name="PHONE" header="PHONE"/>
+            </loadData>
+        </rollback>
+
     </changeSet>
 
 </databaseChangeLog>
