@@ -5,17 +5,26 @@
         http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <!-- ========================================= -->
-    <!-- DELETE OLD DATA -->
-    <!-- ========================================= -->
+    <!-- ===================================================== -->
+    <!-- CHANGESET 1 : DELETE OLD DATA                         -->
+    <!-- ===================================================== -->
 
     <changeSet id="delete-old-data"
                author="Tejas"
-               dbms="oracle">
+               dbms="oracle"
+               runOnChange="true">
+
+        <!-- Delete existing CUSTOMER data -->
 
         <delete tableName="CUSTOMER"/>
 
+        <!-- ================================================= -->
+        <!-- ROLLBACK                                          -->
+        <!-- ================================================= -->
+
         <rollback>
+
+            <!-- Restore old CSV data -->
 
             <loadData
                     file="scripts/old_file.csv"
@@ -32,14 +41,16 @@
 
     </changeSet>
 
-    <!-- ========================================= -->
-    <!-- LOAD NEW DATA -->
-    <!-- ========================================= -->
+    <!-- ===================================================== -->
+    <!-- CHANGESET 2 : LOAD NEW DATA                           -->
+    <!-- ===================================================== -->
 
     <changeSet id="load-new-data"
                author="Tejas"
                dbms="oracle"
                runOnChange="true">
+
+        <!-- Load latest CSV data -->
 
         <loadData
                 file="scripts/new_file.csv"
@@ -51,6 +62,31 @@
             <column name="NAME" header="NAME"/>
 
         </loadData>
+
+        <!-- ================================================= -->
+        <!-- OPTIONAL ROLLBACK                                 -->
+        <!-- ================================================= -->
+
+        <rollback>
+
+            <!-- Delete partially loaded data -->
+
+            <delete tableName="CUSTOMER"/>
+
+            <!-- Restore original data -->
+
+            <loadData
+                    file="scripts/old_file.csv"
+                    tableName="CUSTOMER"
+                    separator=","
+                    encoding="UTF-8">
+
+                <column name="ID" header="ID"/>
+                <column name="NAME" header="NAME"/>
+
+            </loadData>
+
+        </rollback>
 
     </changeSet>
 
