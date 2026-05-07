@@ -4,20 +4,16 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet id="customer-refresh" author="Tejas"
+    <changeSet id="customer-refresh"
+               author="Tejas"
                dbms="oracle"
                runOnChange="true"
                runInTransaction="true">
 
-        <!-- Delete old rows -->
+        <!-- Delete old data -->
         <delete tableName="CUSTOMER"/>
 
-        <!-- Reset sequence -->
-        <sql>
-            ALTER SEQUENCE CUSTOMER_SEQ RESTART START WITH 1
-        </sql>
-
-        <!-- Load new data -->
+        <!-- Load new CSV -->
         <loadData
                 file="scripts/new_file.csv"
                 tableName="CUSTOMER"
@@ -30,29 +26,6 @@
             <column name="PHONE" header="PHONE"/>
 
         </loadData>
-
-        <rollback>
-
-            <delete tableName="CUSTOMER"/>
-
-            <sql>
-                ALTER SEQUENCE CUSTOMER_SEQ RESTART START WITH 1
-            </sql>
-
-            <loadData
-                    file="scripts/old_file.csv"
-                    tableName="CUSTOMER"
-                    separator=","
-                    encoding="UTF-8">
-
-                <column name="ID" header="ID"/>
-                <column name="NAME" header="NAME"/>
-                <column name="EMAIL" header="EMAIL"/>
-                <column name="PHONE" header="PHONE"/>
-
-            </loadData>
-
-        </rollback>
 
     </changeSet>
 
