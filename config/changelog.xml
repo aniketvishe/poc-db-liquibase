@@ -1,35 +1,21 @@
 <databaseChangeLog
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        xsi:schemaLocation="
+        http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <changeSet id="customer-refresh"
-               author="Tejas"
-               dbms="oracle"
-               runOnChange="true">
+    <!-- ========================================= -->
+    <!-- CHANGESET 1 : DELETE OLD DATA -->
+    <!-- ========================================= -->
 
-        <!-- Remove old data -->
+    <changeSet id="delete-old-data"
+               author="Tejas"
+               dbms="oracle">
+
         <delete tableName="CUSTOMER"/>
 
-        <!-- Load new data -->
-        <loadData
-                file="scripts/new_file.csv"
-                tableName="CUSTOMER"
-                separator=","
-                encoding="UTF-8">
-
-            <column name="ID" header="ID"/>
-            <column name="NAME" header="NAME"/>
-            <column name="EMAIL" header="EMAIL"/>
-            <column name="PHONE" header="PHONE"/>
-
-        </loadData>
-
-        <!-- Rollback logic -->
         <rollback>
-
-            <delete tableName="CUSTOMER"/>
 
             <loadData
                     file="scripts/old_file.csv"
@@ -39,12 +25,31 @@
 
                 <column name="ID" header="ID"/>
                 <column name="NAME" header="NAME"/>
-                <column name="EMAIL" header="EMAIL"/>
-                <column name="PHONE" header="PHONE"/>
 
             </loadData>
 
         </rollback>
+
+    </changeSet>
+
+    <!-- ========================================= -->
+    <!-- CHANGESET 2 : LOAD NEW DATA -->
+    <!-- ========================================= -->
+
+    <changeSet id="load-new-data"
+               author="Tejas"
+               dbms="oracle">
+
+        <loadData
+                file="scripts/new_file.csv"
+                tableName="CUSTOMER"
+                separator=","
+                encoding="UTF-8">
+
+            <column name="ID" header="ID"/>
+            <column name="NAME" header="NAME"/>
+
+        </loadData>
 
     </changeSet>
 
