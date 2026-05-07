@@ -4,33 +4,20 @@
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
-    <!-- =========================
-         STEP 1: Clear table
-         ========================= -->
-    <changeSet id="01-truncate" author="Tejas" dbms="oracle" runAlways="true">
-        <sql>TRUNCATE TABLE CUSTOMER</sql>
+    <changeSet id="customer-refresh" author="Tejas"
+               dbms="oracle"
+               runOnChange="true"
+               runInTransaction="true">
 
-        <!-- Rollback restores original data -->
-        <rollback>
-            <loadData
-                file="scripts/old_file.csv"
-                tableName="CUSTOMER"
-                separator=","
-                encoding="UTF-8">
+        <!-- Delete old rows -->
+        <delete tableName="CUSTOMER"/>
 
-                <column name="ID" header="ID"/>
-                <column name="NAME" header="NAME"/>
-                <column name="EMAIL" header="EMAIL"/>
-                <column name="PHONE" header="PHONE"/>
-            </loadData>
-        </rollback>
-    </changeSet>
+        <!-- Reset sequence -->
+        <sql>
+            ALTER SEQUENCE CUSTOMER_SEQ RESTART START WITH 1
+        </sql>
 
-    <!-- =========================
-         STEP 2: Insert updated data
-         ========================= -->
-    <changeSet id="02-load-updated" author="Tejas" dbms="oracle" runOnChange="true">
-
+        <!-- Load new data -->
         <loadData
                 file="scripts/new_file.csv"
                 tableName="CUSTOMER"
@@ -44,21 +31,27 @@
 
         </loadData>
 
-        <!-- If rollback triggered -->
         <rollback>
-            <sql>TRUNCATE TABLE CUSTOMER</sql>
+
+            <delete tableName="CUSTOMER"/>
+
+            <sql>
+                ALTER SEQUENCE CUSTOMER_SEQ RESTART START WITH 1
+            </sql>
 
             <loadData
-                file="scripts/old_file.csv"
-                tableName="CUSTOMER"
-                separator=","
-                encoding="UTF-8">
+                    file="scripts/old_file.csv"
+                    tableName="CUSTOMER"
+                    separator=","
+                    encoding="UTF-8">
 
                 <column name="ID" header="ID"/>
                 <column name="NAME" header="NAME"/>
                 <column name="EMAIL" header="EMAIL"/>
                 <column name="PHONE" header="PHONE"/>
+
             </loadData>
+
         </rollback>
 
     </changeSet>
