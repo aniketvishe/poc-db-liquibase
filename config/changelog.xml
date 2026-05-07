@@ -6,7 +6,7 @@
         http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
     <!-- ========================================= -->
-    <!-- CHANGESET 1 : DELETE OLD DATA -->
+    <!-- DELETE OLD DATA -->
     <!-- ========================================= -->
 
     <changeSet id="delete-old-data"
@@ -33,7 +33,7 @@
     </changeSet>
 
     <!-- ========================================= -->
-    <!-- CHANGESET 2 : LOAD NEW DATA -->
+    <!-- LOAD NEW DATA -->
     <!-- ========================================= -->
 
     <changeSet id="load-new-data"
