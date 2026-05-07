@@ -7,13 +7,12 @@
     <changeSet id="customer-refresh"
                author="Tejas"
                dbms="oracle"
-               runOnChange="true"
-               runInTransaction="true">
+               runOnChange="true">
 
-        <!-- Delete old data -->
+        <!-- Remove old data -->
         <delete tableName="CUSTOMER"/>
 
-        <!-- Load new CSV -->
+        <!-- Load new data -->
         <loadData
                 file="scripts/new_file.csv"
                 tableName="CUSTOMER"
@@ -26,6 +25,26 @@
             <column name="PHONE" header="PHONE"/>
 
         </loadData>
+
+        <!-- Rollback logic -->
+        <rollback>
+
+            <delete tableName="CUSTOMER"/>
+
+            <loadData
+                    file="scripts/old_file.csv"
+                    tableName="CUSTOMER"
+                    separator=","
+                    encoding="UTF-8">
+
+                <column name="ID" header="ID"/>
+                <column name="NAME" header="NAME"/>
+                <column name="EMAIL" header="EMAIL"/>
+                <column name="PHONE" header="PHONE"/>
+
+            </loadData>
+
+        </rollback>
 
     </changeSet>
 
