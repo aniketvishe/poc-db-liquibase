@@ -38,7 +38,8 @@
 
     <changeSet id="load-new-data"
                author="Tejas"
-               dbms="oracle">
+               dbms="oracle"
+               runOnChange="true">
 
         <loadData
                 file="scripts/new_file.csv"
