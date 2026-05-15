@@ -1,7 +1,7 @@
 ID,NAME,EMAIL,PHONE
-1,manish,manish@demo.com
-2,aniket,aniket@demo.com
-3,saif,saif@demo.com
-4,om,om@demo.com
-5,ram,ram@demo.in
-6,divesh,divesh@d.com
+1,manish,manish@demo.com,123456
+2,aniket,aniket@demo.com,12345
+3,saif,saif@demo.com,12345
+4,om,om@demo.com,123456
+5,ram,ram@demo.in,1234567
+6,divesh,divesh@d.com,54321
